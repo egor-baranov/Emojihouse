@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "524971132147",
+    "project_id": "emojihouse-7b23f",
+    "storage_bucket": "emojihouse-7b23f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:524971132147:android:b3791edbd359d9a053a386",
+        "android_client_info": {
+          "package_name": "com.kepler88d.emojihouse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "524971132147-t0j0re4pkf4977aamg52v6gjj9qp3cjv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGGUAyKXTRNa9vYY96NHWZRSLexAxHoXU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "524971132147-t0j0re4pkf4977aamg52v6gjj9qp3cjv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
