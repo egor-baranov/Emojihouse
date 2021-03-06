@@ -110,7 +110,7 @@ class ChatActivity : AppCompatActivity() {
                     refSender.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             senderName = snapshot.child("username").getValue().toString()
-                            val emoji = getRandomEmoji()
+                            val emoji = snapshot.child("profileImage").getValue().toString()
                             addMessage(senderName, emoji, text)
                         }
 
@@ -152,16 +152,6 @@ class ChatActivity : AppCompatActivity() {
 
             binding.emojiLayout.addView(newView)
         }
-    }
-
-    private fun getRandomEmoji(): String {
-        return listOf(
-            "😏", "🤣", "🤡", "😎",
-            "🤥", "😉", "😳", "🧐",
-            "🤓", "🤩", "🥳", "🤯",
-            "🤪", "😋", "🤨", "😼",
-            "🏘", "🏠", "🏚", "🏡"
-        ).random()
     }
 
     private fun sendMessage() {
