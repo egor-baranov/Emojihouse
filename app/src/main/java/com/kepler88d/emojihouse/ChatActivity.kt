@@ -17,6 +17,7 @@ import com.kepler88d.emojihouse.databinding.ActivityChatBinding
 class ChatActivity : AppCompatActivity() {
     lateinit var binding: ActivityChatBinding
     lateinit var userData: User
+    var firstlaunch = true
     var idRoom = ""
     val list = mutableListOf<message>()
     val emojiList = listOf(
@@ -101,27 +102,48 @@ class ChatActivity : AppCompatActivity() {
                 if (snapshot.children.count() == 0) {
                     return
                 }
+                if(!firstlaunch){
+                    listOf(snapshot.children.last()).forEach {
+                        val text = it.child("message").getValue().toString()
+                        val sender = it.child("sender").getValue()
+                        var senderName = ""
+                        val refSender = FirebaseDatabase.getInstance(url).getReference("/users/$sender")
+                        refSender.addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                senderName = snapshot.child("username").getValue().toString()
+                                val emoji = snapshot.child("profileImage").getValue().toString()
+                                addMessage(senderName, emoji, text)
+                            }
 
-                listOf(snapshot.children.last()).forEach {
-                    val text = it.child("message").getValue().toString()
-                    val sender = it.child("sender").getValue()
-                    var senderName = ""
-                    val refSender = FirebaseDatabase.getInstance(url).getReference("/users/$sender")
-                    refSender.addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            senderName = snapshot.child("username").getValue().toString()
-                            val emoji = snapshot.child("profileImage").getValue().toString()
-                            addMessage(senderName, emoji, text)
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {}
-                    })
+                            override fun onCancelled(error: DatabaseError) {}
+                        })
+                    }
                 }
+                else{
+                    snapshot.children.forEach {
+                        firstlaunch = false
+                        val text = it.child("message").getValue().toString()
+                        val sender = it.child("sender").getValue()
+                        var senderName = ""
+                        val refSender = FirebaseDatabase.getInstance(url).getReference("/users/$sender")
+                        refSender.addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                senderName = snapshot.child("username").getValue().toString()
+                                val emoji = snapshot.child("profileImage").getValue().toString()
+                                addMessage(senderName, emoji, text)
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {}
+                        })
+                    }
+                }
+
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
     }
+
 
     private fun addMessage(username: String, icon: String, messageText: String) {
         if (messageText == null || messageText.trim() == "null") {
