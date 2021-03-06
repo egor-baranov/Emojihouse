@@ -1,6 +1,7 @@
 # 🏠 Emojihouse
 
-This is a messanger inspired by Telegram and Clubhouse that allows you to communicate with other people using onli emojis.
+This is a messanger inspired by Telegram and Clubhouse that allows you to communicate with other people using only emojis.
+You can also invite your friends using a key that also consists of emojis.
 
 ## Key features
 * Social network functionality: you can create
