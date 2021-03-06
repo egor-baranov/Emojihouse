@@ -69,11 +69,16 @@ class MainActivity : AppCompatActivity() {
                                 val ref = FirebaseDatabase.getInstance(url).getReference("/rooms")
                                 ref.addListenerForSingleValueEvent(object : ValueEventListener{
                                     override fun onDataChange(snapshot: DataSnapshot) {
+
                                         snapshot.children.forEach {
                                             if(it.child("password").getValue() == passwordRoom){
                                                 val refSubscribeUser = FirebaseDatabase.getInstance(url).getReference("/users/${userData.id}/subscriptions")
                                                 refSubscribeUser.child(it.key.toString()).setValue("")
                                                 ref.child(it.key.toString()).child("members").child(userData.id).setValue("")
+                                                val name = it.child("roomName").getValue().toString()
+                                                val id = it.key.toString()
+                                                val count = it.child("members").childrenCount.toInt()
+                                                addChat(name, count, id)
                                                 return@forEach
                                             }
                                         }
