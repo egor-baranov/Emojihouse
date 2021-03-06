@@ -1,12 +1,12 @@
 # 🏠 Emojihouse
-
-This is a messanger inspired by Telegram and Clubhouse that allows you to communicate with other people using only emojis.
-You can also invite your friends using a key that also consists of emojis.
+This is a messenger inspired by Telegram and Clubhouse that allows you to communicate with other people using only emojis.
 
 ## Key features
-* Social network functionality: you can create
+* Account creation
+* Creation of chat
+* Joining by invite links into already existing chats
+* Sending messages
 * Server side powered by Google Firebase
-* Invite links consisting of 6 emojis
 
 ## Architecture
 ![image](https://user-images.githubusercontent.com/49813134/110195864-5cd75a00-7e51-11eb-97af-f3b65695a0d4.png)
