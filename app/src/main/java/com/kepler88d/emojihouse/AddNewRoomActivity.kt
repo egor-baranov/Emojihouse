@@ -35,6 +35,7 @@ class AddNewRoomActivity : AppCompatActivity() {
                 val ref = FirebaseDatabase.getInstance(url).getReference("/rooms")
                 ref.child(roomId).setValue(mChannel)
                     .addOnSuccessListener {
+                        addRoomToUser(roomId)
                         val intent = Intent(this, MainActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
@@ -46,6 +47,10 @@ class AddNewRoomActivity : AppCompatActivity() {
 
 
         }
+    }
+
+    private fun addRoomToUser(roomId : String) {
+        val ref = FirebaseDatabase.getInstance(url).getReference("/users")
     }
 
     data class NewChannel(
