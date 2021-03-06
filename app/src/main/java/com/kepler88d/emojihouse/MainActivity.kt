@@ -1,13 +1,20 @@
 package com.kepler88d.emojihouse
 
+import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.kepler88d.emojihouse.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -43,12 +50,39 @@ class MainActivity : AppCompatActivity() {
         binding.floatingActionButton.setOnClickListener {
             MaterialAlertDialogBuilder(currentActivity).setTitle("Choose an action 🤔")
                 .setItems(arrayOf("😎 Create chat", "🥳 Join Chat")) { dialog, which ->
-                    startActivity(
-                        Intent(
-                            currentActivity,
-                            if (which == 0) AddNewRoomActivity::class.java else SearchRoomActivity::class.java
-                        )
-                    )
+                    if(which == 0){
+                        startActivity(Intent(this, AddNewRoomActivity::class.java))
+                    }
+                    else if(which == 1){
+                        val dialogInflater = LayoutInflater.from(this).inflate(R.layout.dialog_password, null)
+                        val passDialog = dialogInflater.findViewById(R.id.textInputLayout_EnterFormPassword) as TextInputLayout
+
+                        val builder = AlertDialog.Builder(this)
+                            .setView(dialogInflater)
+                            .setTitle("Input password")
+                            .setNegativeButton("Close"){dialog, which ->  }
+                            .setPositiveButton("Join"){dialog, which ->
+                                val passwordRoom = passDialog.editText?.text.toString()
+                                val ref = FirebaseDatabase.getInstance(url).getReference("/rooms")
+                                ref.addListenerForSingleValueEvent(object : ValueEventListener{
+                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                        snapshot.children.forEach {
+                                            if(it.child("password").getValue() == passwordRoom){
+                                                val refSubscribeUser = FirebaseDatabase.getInstance(url).getReference("/users/${userData.id}/subscriptions")
+                                                refSubscribeUser.child(it.key.toString()).setValue("")
+                                                ref.child(it.key.toString()).child("members").child(userData.id).setValue("")
+                                                return@forEach
+                                            }
+                                        }
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {}
+                                })
+                            }
+                        builder.create().show()
+                    }
+
+
                 }
                 .show()
         }

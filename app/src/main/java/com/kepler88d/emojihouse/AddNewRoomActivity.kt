@@ -82,7 +82,16 @@ class AddNewRoomActivity : AppCompatActivity() {
     }
 
     private fun addRoomToUser(roomId: String) {
-        val ref = FirebaseDatabase.getInstance(url).getReference("/users")
+        val ref = FirebaseDatabase.getInstance(url).getReference("/users/${userData.id}")
+        ref.child("subscriptions").child(roomId).setValue("")
+            .addOnSuccessListener {
+                addUserToRoom(roomId)
+            }
+    }
+
+    private fun addUserToRoom(roomId: String) {
+        val ref = FirebaseDatabase.getInstance(url).getReference("/rooms/$roomId/members")
+        ref.child(userData.id).setValue("")
     }
 
     data class NewChannel(
