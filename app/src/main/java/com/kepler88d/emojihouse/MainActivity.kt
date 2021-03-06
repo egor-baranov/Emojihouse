@@ -1,5 +1,6 @@
 package com.kepler88d.emojihouse
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,9 +22,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun addChat(chatName: String, memberCount: Int) {
         val newView =
-            LayoutInflater.from(applicationContext).inflate(R.layout.chat_item, null, false)
+            LayoutInflater.from(this).inflate(R.layout.chat_item, null, false)
         newView.findViewWithTag<TextView>("channelName").text = chatName
         newView.findViewWithTag<TextView>("memberCount").text = "$memberCount members"
+
+        newView.setOnClickListener {
+            val intent = Intent(this, ChatActivity::class.java)
+            startActivity(intent)
+        }
+
         findViewById<LinearLayout>(R.id.chatList).addView(newView)
     }
 }
