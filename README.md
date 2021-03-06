@@ -10,7 +10,9 @@ This is a messenger inspired by Telegram and Clubhouse that allows you to commun
 
 ## Codes for testing channels:
 winx club: 🏠😎🏠🤡🏠🤯
+
 i guess we won: 😳🧐😋🤪😏🤯
+
 something about us: 😏😳🧐🏡🤯🧐
 
 ## Architecture
