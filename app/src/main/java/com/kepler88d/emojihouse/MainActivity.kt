@@ -150,7 +150,7 @@ class MainActivity : AppCompatActivity() {
             LayoutInflater.from(this).inflate(R.layout.chat_item, null, false)
         newView.findViewWithTag<TextView>("channelName").text = chatName
         newView.findViewWithTag<TextView>("memberCount").text = "$memberCount members"
-        newView.findViewWithTag<TextView>("img").text = getRandomEmoji()
+        newView.findViewWithTag<TextView>("img").text = pic.take(2)
         newView.setOnClickListener {
             Log.d("checkfetch", id)
             val intent = Intent(this, ChatActivity::class.java)
@@ -160,15 +160,7 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<LinearLayout>(R.id.chatList).addView(newView)
     }
-    private fun getRandomEmoji(): String {
-        return listOf(
-            "😏", "🤣", "🤡", "😎",
-            "🤥", "😉", "😳", "🧐",
-            "🤓", "🤩", "🥳", "🤯",
-            "🤪", "😋", "🤨", "😼",
-            "🏘", "🏠", "🏚", "🏡"
-        ).random()
-    }
+
     data class Rooms(
         val id: String,
         val roomName: String,
