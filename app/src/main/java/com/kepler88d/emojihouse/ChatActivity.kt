@@ -45,7 +45,7 @@ class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             idRoom = intent.extras!!["id"].toString()
         }
 
@@ -80,9 +80,9 @@ class ChatActivity : AppCompatActivity() {
     }
 
 
-    private fun fetchRoomName(){
+    private fun fetchRoomName() {
         val ref = FirebaseDatabase.getInstance(url).getReference("/rooms/$idRoom")
-        ref.addListenerForSingleValueEvent(object : ValueEventListener{
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val name = snapshot.child("roomName").getValue().toString()
                 binding.textView4.text = name
@@ -96,14 +96,18 @@ class ChatActivity : AppCompatActivity() {
 
     private fun addListenerForMessages() {
         val ref = FirebaseDatabase.getInstance(url).getReference("/rooms/$idRoom/messages")
-        ref.addValueEventListener(object : ValueEventListener{
+        ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.children.forEach {
+                if (snapshot.children.count() == 0) {
+                    return
+                }
+
+                listOf(snapshot.children.last()).forEach {
                     val text = it.child("message").getValue().toString()
                     val sender = it.child("sender").getValue()
                     var senderName = ""
                     val refSender = FirebaseDatabase.getInstance(url).getReference("/users/$sender")
-                    refSender.addListenerForSingleValueEvent(object : ValueEventListener{
+                    refSender.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             senderName = snapshot.child("username").getValue().toString()
                             val emoji = getRandomEmoji()
@@ -115,13 +119,15 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onCancelled(error: DatabaseError) {
-
-            }
+            override fun onCancelled(error: DatabaseError) {}
         })
     }
 
     private fun addMessage(username: String, icon: String, messageText: String) {
+        if (messageText == null || messageText.trim() == "null") {
+            return
+        }
+
         val newView =
             LayoutInflater.from(this).inflate(R.layout.message_item, null, false)
 
@@ -147,6 +153,7 @@ class ChatActivity : AppCompatActivity() {
             binding.emojiLayout.addView(newView)
         }
     }
+
     private fun getRandomEmoji(): String {
         return listOf(
             "😏", "🤣", "🤡", "😎",
@@ -156,10 +163,11 @@ class ChatActivity : AppCompatActivity() {
             "🏘", "🏠", "🏚", "🏡"
         ).random()
     }
+
     private fun sendMessage() {
         val message = binding.textFieldUsername.editText!!.text.toString()
         val ref = FirebaseDatabase.getInstance(url).getReference("/rooms/$idRoom/messages")
-        ref.addListenerForSingleValueEvent(object : ValueEventListener{
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
 
             }
@@ -172,9 +180,10 @@ class ChatActivity : AppCompatActivity() {
         })
         binding.textFieldUsername.editText!!.setText("")
     }
+
     data class message(
-        val name : String,
-        val icon : String,
-        val text : String
+        val name: String,
+        val icon: String,
+        val text: String
     )
 }

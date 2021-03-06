@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
                         val builder = AlertDialog.Builder(this)
                             .setView(dialogInflater)
-                            .setTitle("Input password")
+                            .setTitle("Enter invite code")
                             .setNegativeButton("Close"){dialog, which ->  }
                             .setPositiveButton("Join"){dialog, which ->
                                 val passwordRoom = passDialog.editText?.text.toString()
