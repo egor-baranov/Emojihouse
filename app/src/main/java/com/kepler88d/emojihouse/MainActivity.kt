@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -42,9 +43,11 @@ class MainActivity : AppCompatActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        for (i in 0..50) {
-            addChat("chat $i", (5 * i + 327374) % 84)
-        }
+
+        fetchRooms()
+//        for (i in 0..50) {
+//            addChat("chat $i", (5 * i + 327374) % 84, "")
+//        }
 
         val currentActivity = this
         binding.floatingActionButton.setOnClickListener {
@@ -88,17 +91,68 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun addChat(chatName: String, memberCount: Int) {
+    private fun fetchRooms(){
+        val rooms = mutableListOf<String>()
+        val ref = FirebaseDatabase.getInstance(url).getReference("/users/${userData.id}/subscriptions")
+        ref.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach {
+                    val id = it.key
+                    Log.d("checkfetch", "$id")
+                    rooms.add(id!!)
+                }
+                val refRooms = FirebaseDatabase.getInstance(url).getReference("/rooms")
+                rooms.forEach {
+                    Log.d("checkfetch", " 1 $it")
+                    val room = refRooms
+                    room.addListenerForSingleValueEvent(object : ValueEventListener{
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            val name = snapshot.child(it).child("roomName").getValue().toString()
+                            var count = 0
+                            val id = snapshot.child(it).key.toString()
+                            snapshot.child(it).child("members").children.forEach {
+                                count++
+                            }
+                            Log.d("checkfetch", "$name $count $id")
+                            addChat(name, count, id)
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+
+                        }
+                    })
+
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+        ref.onDisconnect()
+
+
+    }
+
+    private fun addChat(chatName: String, memberCount: Int, id: String) {
         val newView =
             LayoutInflater.from(this).inflate(R.layout.chat_item, null, false)
         newView.findViewWithTag<TextView>("channelName").text = chatName
         newView.findViewWithTag<TextView>("memberCount").text = "$memberCount members"
 
         newView.setOnClickListener {
+            Log.d("checkfetch", id)
             val intent = Intent(this, ChatActivity::class.java)
+            intent.putExtra("id", id)
             startActivity(intent)
         }
 
         findViewById<LinearLayout>(R.id.chatList).addView(newView)
     }
+    data class Rooms(
+        val id: String,
+        val roomName: String,
+        val password: String
+    )
 }
