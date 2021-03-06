@@ -78,7 +78,8 @@ class MainActivity : AppCompatActivity() {
                                                 val name = it.child("roomName").getValue().toString()
                                                 val id = it.key.toString()
                                                 val count = it.child("members").childrenCount.toInt()
-                                                addChat(name, count, id)
+                                                val pic = it.child("picture").getValue().toString()
+                                                addChat(name, count, id, pic)
                                                 return@forEach
                                             }
                                         }
@@ -114,12 +115,16 @@ class MainActivity : AppCompatActivity() {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             val name = snapshot.child(it).child("roomName").getValue().toString()
                             var count = 0
+                            val pic = snapshot.child(it).child("password").getValue().toString()
                             val id = snapshot.child(it).key.toString()
-                            snapshot.child(it).child("members").children.forEach {
-                                count++
-                            }
-                            Log.d("checkfetch", "$name $count $id")
-                            addChat(name, count, id)
+//                            if(name.isNullOrEmpty()){
+                                snapshot.child(it).child("members").children.forEach {
+                                    count++
+                                }
+                                Log.d("checkfetch", "$name $count $id")
+                                addChat(name, count, id, pic)
+//                            }
+
                         }
 
                         override fun onCancelled(error: DatabaseError) {
@@ -140,12 +145,12 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun addChat(chatName: String, memberCount: Int, id: String) {
+    private fun addChat(chatName: String, memberCount: Int, id: String, pic : String) {
         val newView =
             LayoutInflater.from(this).inflate(R.layout.chat_item, null, false)
         newView.findViewWithTag<TextView>("channelName").text = chatName
         newView.findViewWithTag<TextView>("memberCount").text = "$memberCount members"
-
+        newView.findViewWithTag<TextView>("img").text = getRandomEmoji()
         newView.setOnClickListener {
             Log.d("checkfetch", id)
             val intent = Intent(this, ChatActivity::class.java)
@@ -154,6 +159,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<LinearLayout>(R.id.chatList).addView(newView)
+    }
+    private fun getRandomEmoji(): String {
+        return listOf(
+            "😏", "🤣", "🤡", "😎",
+            "🤥", "😉", "😳", "🧐",
+            "🤓", "🤩", "🥳", "🤯",
+            "🤪", "😋", "🤨", "😼",
+            "🏘", "🏠", "🏚", "🏡"
+        ).random()
     }
     data class Rooms(
         val id: String,

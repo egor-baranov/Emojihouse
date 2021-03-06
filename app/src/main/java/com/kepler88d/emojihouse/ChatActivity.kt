@@ -64,6 +64,8 @@ class ChatActivity : AppCompatActivity() {
         binding.imageView.setOnClickListener{
             onBackPressed()
         }
+
+
     }
 
     private fun loadKeyboard() {

@@ -42,6 +42,7 @@ class AddNewRoomActivity : AppCompatActivity() {
             val textRoom = binding.textFieldRoomname.editText?.text.toString()
 
             val password = generatePassword()
+            val pic = password[0]
             if (textRoom.isEmpty()) {
                 binding.textFieldRoomname.error = "Room name can't be empty"
             }
@@ -50,6 +51,7 @@ class AddNewRoomActivity : AppCompatActivity() {
                 val roomId = UUID.randomUUID().toString()
                 val mChannel = NewChannel(textRoom, password)
                 val ref = FirebaseDatabase.getInstance(url).getReference("/rooms")
+//                ref.child(roomId).child("picture").setValue(pic)
                 ref.child(roomId).setValue(mChannel)
                     .addOnSuccessListener {
                         addRoomToUser(roomId)
