@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kepler88d.emojihouse.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -17,6 +18,20 @@ class MainActivity : AppCompatActivity() {
 
         for (i in 0..50) {
             addChat("chat $i", (5 * i + 327374) % 84)
+        }
+
+        val currentActivity = this
+        binding.floatingActionButton.setOnClickListener {
+            MaterialAlertDialogBuilder(currentActivity).setTitle("Choose an action 🤔")
+                .setItems(arrayOf("😎 Create chat", "🥳 Join Chat")) { dialog, which ->
+                    startActivity(
+                        Intent(
+                            currentActivity,
+                            if (which == 0) AddNewRoomActivity::class.java else SearchRoomActivity::class.java
+                        )
+                    )
+                }
+                .show()
         }
     }
 
