@@ -25,3 +25,8 @@ Splash Screen:
 Login Activity:
 https://user-images.githubusercontent.com/49813134/110195752-9b204980-7e50-11eb-88aa-04cd9b687106.mp4
 
+![image](https://user-images.githubusercontent.com/49813134/110197304-be9cc180-7e5b-11eb-9950-fc57ffa99230.png)
+![image](https://user-images.githubusercontent.com/49813134/110197306-bfcdee80-7e5b-11eb-9b51-07b36af383f0.png)
+![image](https://user-images.githubusercontent.com/49813134/110197307-c0668500-7e5b-11eb-9832-b107abd5ebe1.png)
+![image](https://user-images.githubusercontent.com/49813134/110197308-c197b200-7e5b-11eb-852c-42e4abd7fa2e.png)
+![image](https://user-images.githubusercontent.com/49813134/110197309-c2304880-7e5b-11eb-9650-7a0029ce0953.png)
