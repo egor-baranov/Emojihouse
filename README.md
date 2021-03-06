@@ -8,6 +8,11 @@ This is a messenger inspired by Telegram and Clubhouse that allows you to commun
 * Sending messages
 * Server side powered by Google Firebase
 
+## Codes for testing channels:
+winx club: 🏠😎🏠🤡🏠🤯
+i guess we won: 😳🧐😋🤪😏🤯
+something about us: 😏😳🧐🏡🤯🧐
+
 ## Architecture
 ![image](https://user-images.githubusercontent.com/49813134/110195864-5cd75a00-7e51-11eb-97af-f3b65695a0d4.png)
 
