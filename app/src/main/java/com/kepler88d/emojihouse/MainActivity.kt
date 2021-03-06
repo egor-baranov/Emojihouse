@@ -11,9 +11,28 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kepler88d.emojihouse.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
     lateinit var binding: ActivityMainBinding
+
+    lateinit var userData: User
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        userData = User("", "", "")
+
+        openFileInput("id").use {
+            userData.id = it.readBytes().toString(Charsets.UTF_8)
+        }
+
+        openFileInput("username").use {
+            userData.username = it.readBytes().toString(Charsets.UTF_8)
+        }
+
+        openFileInput("profileImage").use {
+            userData.profileImage = it.readBytes().toString(Charsets.UTF_8)
+        }
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         for (i in 0..50) {

@@ -112,7 +112,7 @@ class LoginActivity : AppCompatActivity() {
 }
 
 data class User(
-    val id: String,
-    val username: String,
-    val profileImage: String = ""
+    var id: String,
+    var username: String,
+    var profileImage: String = ""
 )
