@@ -1,30 +1,42 @@
 package com.kepler88d.emojihouse
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import android.widget.Toast
-import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.kepler88d.emojihouse.databinding.ActivityLoginBinding
 import java.util.*
 
-val url = "https://emojihouse-7b23f-default-rtdb.europe-west1.firebasedatabase.app/"
+const val url = "https://emojihouse-7b23f-default-rtdb.europe-west1.firebasedatabase.app/"
+
+val requiredPermissions = arrayOf(
+    Manifest.permission.READ_EXTERNAL_STORAGE,
+    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    Manifest.permission.INTERNET
+)
+
 class LoginActivity : AppCompatActivity() {
-    lateinit var binding : ActivityLoginBinding
+    lateinit var binding: ActivityLoginBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val ref = FirebaseDatabase.getInstance(url).getReference("/users")
+
+        ActivityCompat.requestPermissions(
+            this,
+            requiredPermissions,
+            300
+        )
+
+        FirebaseDatabase.getInstance(url).getReference("/users")
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         attachTextChanger()
@@ -34,45 +46,73 @@ class LoginActivity : AppCompatActivity() {
     private fun addLoginButtonListener() {
         binding.loginButton.setOnClickListener {
             val text = binding.textFieldUsername.editText?.text
-            if(text.isNullOrEmpty()){
-                binding.textFieldUsername.error = "Input your nickname"
-            }
-            else{
+            if (text.isNullOrEmpty()) {
+                binding.textFieldUsername.error = "Username can't be empty"
+            } else if (!requiredPermissions.all {
+                    ContextCompat.checkSelfPermission(
+                        applicationContext, it
+                    ) == PackageManager.PERMISSION_GRANTED
+                }) {
+                Toast.makeText(
+                    this,
+                    "Not the all permissions were given by you",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                ActivityCompat.requestPermissions(
+                    this,
+                    requiredPermissions,
+                    300
+                )
+            } else {
                 val userId = UUID.randomUUID().toString()
                 val ref = FirebaseDatabase.getInstance(url).getReference("/users")
-                val user = User(text.toString(), "")
+                val user = User(id = userId, username = text.toString(), profileImage = "")
 
                 ref.child(userId).setValue(user)
                     .addOnSuccessListener {
-                        Toast.makeText(this, "success", Toast.LENGTH_SHORT).show()
                         val intent = Intent(this, MainActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
+
+                        saveUserData(user)
                     }
                     .addOnFailureListener {
-                        Toast.makeText(this, "Something's gone wrong. Try later", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            "Something's gone wrong. Try later",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
 
             }
         }
     }
-    data class User(
-        val nickname : String,
-        val profile_img : String = ""
-    )
-    private fun attachTextChanger(){
+
+    private fun saveUserData(user: User) {
+        this.openFileOutput("id", Context.MODE_PRIVATE).write(user.id.toByteArray())
+        this.openFileOutput("username", Context.MODE_PRIVATE).write(user.username.toByteArray())
+        this.openFileOutput("profileImage", Context.MODE_PRIVATE)
+            .write(user.profileImage.toByteArray())
+    }
+
+    private fun attachTextChanger() {
         binding.textFieldUsername.editText!!.addTextChangedListener(object :
             TextWatcher {
             override fun afterTextChanged(s: Editable) {}
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 binding.textFieldUsername.error = null
-                binding.textView.text = "\uD83D\uDC4B Hello${if(s.isNotBlank()) ", ${s.trim()}" else ""}."
+                binding.textView.text =
+                    "\uD83D\uDC4B Hello${if (s.isNotBlank()) ", ${s.trim()}" else ""}."
             }
         })
-
-        findViewById<MaterialButton>(R.id.loginButton).setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-        }
     }
 }
+
+data class User(
+    val id: String,
+    val username: String,
+    val profileImage: String = ""
+)
