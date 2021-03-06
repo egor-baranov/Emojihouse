@@ -61,11 +61,20 @@ class ChatActivity : AppCompatActivity() {
             sendMessage()
         }
 
-        binding.imageView.setOnClickListener{
+        binding.imageView.setOnClickListener {
             onBackPressed()
         }
+    }
 
+    private fun addMessage(username: String, icon: String, messageText: String) {
+        val newView =
+            LayoutInflater.from(this).inflate(R.layout.message_item, null, false)
 
+        newView.findViewWithTag<TextView>("username").text = username
+        newView.findViewWithTag<TextView>("icon").text = icon
+        newView.findViewWithTag<TextView>("messageText").text = messageText
+
+        binding.chatList.addView(newView)
     }
 
     private fun loadKeyboard() {

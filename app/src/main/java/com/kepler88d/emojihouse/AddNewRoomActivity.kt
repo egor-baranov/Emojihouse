@@ -67,6 +67,16 @@ class AddNewRoomActivity : AppCompatActivity() {
         }
     }
 
+    private fun getRandomEmoji(): String {
+        return listOf(
+            "😏", "🤣", "🤡", "😎",
+            "🤥", "😉", "😳", "🧐",
+            "🤓", "🤩", "🥳", "🤯",
+            "🤪", "😋", "🤨", "😼",
+            "🏘", "🏠", "🏚", "🏡"
+        ).random()
+    }
+
     private fun generatePassword(): String {
         val emojiList = listOf(
             "😏", "🤣", "🤡", "😎",
