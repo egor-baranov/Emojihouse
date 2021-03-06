@@ -14,6 +14,7 @@ class SplashScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash_screen)
 
+        binding.emojihouse.text = "Emojihouse 🏠"
         findViewById<TextView>(R.id.splashScreenEmoji).text =
             listOf(
                 "😏",

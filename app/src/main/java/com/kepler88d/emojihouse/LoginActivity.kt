@@ -67,7 +67,8 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 val userId = UUID.randomUUID().toString()
                 val ref = FirebaseDatabase.getInstance(url).getReference("/users")
-                val user = User(id = userId, username = text.toString(), profileImage = "")
+                val user =
+                    User(id = userId, username = text.toString(), profileImage = getRandomEmoji())
 
                 ref.child(userId).setValue(user)
                     .addOnSuccessListener {
@@ -108,6 +109,31 @@ class LoginActivity : AppCompatActivity() {
                     "\uD83D\uDC4B Hello${if (s.isNotBlank()) ", ${s.trim()}" else ""}."
             }
         })
+    }
+
+    private fun getRandomEmoji(): String {
+        return listOf(
+            "😏",
+            "🤣",
+            "🤡",
+            "😎",
+            "🤥",
+            "😉",
+            "😳",
+            "🧐",
+            "🤓",
+            "🤩",
+            "🥳",
+            "🤯",
+            "🤪",
+            "😋",
+            "🤨",
+            "😼",
+            "🏘",
+            "🏠",
+            "🏚",
+            "🏡"
+        ).random()
     }
 }
 
