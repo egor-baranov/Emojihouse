@@ -2,24 +2,22 @@
 ___This is a messenger inspired by Telegram and Clubhouse that allows you to communicate with other people using only emojis.___
 
 ## Key features
-✅ Account creation
-✅ Creation of chat
-✅ Joining by invite links into already existing chats
-✅ Sending messages
-✅ Server side powered by Google Firebase
-🅾️ Ability to copy link from the chat
-🅾️ Account data editing
-🅾️ Deleting of symbols while typing text
-🅾️ Deleting of messages and account (you can delete app and account will automatically be deleted)
-🅾️ Account sync between multiple devices
-🅾️ Replying to messages
+✅ Account creation<br />
+✅ Creation of chat<br />
+✅ Joining by invite links into already existing chats<br />
+✅ Sending messages<br />
+✅ Server side powered by Google Firebase<br />
+🅾️ Ability to copy link from the chat<br />
+🅾️ Account data editing<br />
+🅾️ Deleting of symbols while typing text<br />
+🅾️ Deleting of messages and account (you can delete app and account will automatically be deleted)<br />
+🅾️ Account sync between multiple devices<br />
+🅾️ Replying to messages<br />
 
-## Codes for testing channels:
-winx club: 🏠😎🏠🤡🏠🤯
-
-i guess we won: 😳🧐😋🤪😏🤯
-
-something about us: 😏😳🧐🏡🤯🧐
+## Codes for testing channels: 
+winx club: 🏠😎🏠🤡🏠🤯<br />
+i guess we won: 😳🧐😋🤪😏🤯<br />
+something about us: 😏😳🧐🏡🤯🧐<br />
 
 ## Architecture
 ![image](https://user-images.githubusercontent.com/49813134/110195864-5cd75a00-7e51-11eb-97af-f3b65695a0d4.png)
