@@ -1,12 +1,18 @@
 # 🏠 Emojihouse
-This is a messenger inspired by Telegram and Clubhouse that allows you to communicate with other people using only emojis.
+___This is a messenger inspired by Telegram and Clubhouse that allows you to communicate with other people using only emojis.___
 
 ## Key features
-* Account creation
-* Creation of chat
-* Joining by invite links into already existing chats
-* Sending messages
-* Server side powered by Google Firebase
+✅ Account creation
+✅ Creation of chat
+✅ Joining by invite links into already existing chats
+✅ Sending messages
+✅ Server side powered by Google Firebase
+🅾️ Ability to copy link from the chat
+🅾️ Account data editing
+🅾️ Deleting of symbols while typing text
+🅾️ Deleting of messages and account (you can delete app and account will automatically be deleted)
+🅾️ Account sync between multiple devices
+🅾️ Replying to messages
 
 ## Codes for testing channels:
 winx club: 🏠😎🏠🤡🏠🤯
