@@ -3,10 +3,16 @@ package com.kepler88d.emojihouse
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextMenu
 import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -17,30 +23,19 @@ import com.kepler88d.emojihouse.databinding.ActivityChatBinding
 class ChatActivity : AppCompatActivity() {
     lateinit var binding: ActivityChatBinding
     lateinit var userData: User
+
+    lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
+
     var firstlaunch = true
     var idRoom = ""
-    val list = mutableListOf<message>()
     val emojiList = listOf(
-        "😏",
-        "🤣",
-        "🤡",
-        "😎",
-        "🤥",
-        "😉",
-        "😳",
-        "🧐",
-        "🤓",
-        "🤩",
-        "🥳",
-        "🤯",
-        "🤪",
-        "😋",
-        "🤨",
-        "😼",
-        "🏘",
-        "🏠",
-        "🏚",
-        "🏡"
+        "😏", "🤣", "🤡", "😎",
+        "🤥", "😉", "😳", "🧐",
+        "🤓", "🤩", "🥳", "🤯",
+        "🤪", "😋", "🤨", "😼",
+        "🏘", "🏠", "🏚", "🏡",
+        "🥶", "🥴", "👺", "🤖",
+        "💩", "🐸", "🐖"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +73,41 @@ class ChatActivity : AppCompatActivity() {
         }
         fetchRoomName()
         addListenerForMessages()
+
+        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheet))
+
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        bottomSheetBehavior.isHideable = false
+
+        bottomSheetBehavior.setBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {}
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
+
+        binding.textFieldUsername.editText!!.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
+        binding.textFieldUsername.editText!!.isFocusedByDefault = true
+
+        binding.menuButton.setOnClickListener { v: View ->
+            showMenu(v, R.menu.chat_dropdown_menu)
+        }
+    }
+
+    private fun showMenu(v: View, @MenuRes menuRes: Int) {
+        val popup = PopupMenu(this, v)
+        popup.menuInflater.inflate(menuRes, popup.menu)
+
+        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+            true
+        }
+        popup.setOnDismissListener {
+            // Respond to popup being dismissed.
+        }
+        // Show the popup menu.
+        popup.show()
     }
 
 
@@ -89,9 +119,7 @@ class ChatActivity : AppCompatActivity() {
                 binding.textView4.text = name
             }
 
-            override fun onCancelled(error: DatabaseError) {
-
-            }
+            override fun onCancelled(error: DatabaseError) {}
         })
     }
 
@@ -102,12 +130,13 @@ class ChatActivity : AppCompatActivity() {
                 if (snapshot.children.count() == 0) {
                     return
                 }
-                if(!firstlaunch){
+                if (!firstlaunch) {
                     listOf(snapshot.children.last()).forEach {
                         val text = it.child("message").getValue().toString()
                         val sender = it.child("sender").getValue()
                         var senderName = ""
-                        val refSender = FirebaseDatabase.getInstance(url).getReference("/users/$sender")
+                        val refSender =
+                            FirebaseDatabase.getInstance(url).getReference("/users/$sender")
                         refSender.addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(snapshot: DataSnapshot) {
                                 senderName = snapshot.child("username").getValue().toString()
@@ -118,14 +147,14 @@ class ChatActivity : AppCompatActivity() {
                             override fun onCancelled(error: DatabaseError) {}
                         })
                     }
-                }
-                else{
+                } else {
                     snapshot.children.forEach {
                         firstlaunch = false
                         val text = it.child("message").getValue().toString()
                         val sender = it.child("sender").getValue()
                         var senderName = ""
-                        val refSender = FirebaseDatabase.getInstance(url).getReference("/users/$sender")
+                        val refSender =
+                            FirebaseDatabase.getInstance(url).getReference("/users/$sender")
                         refSender.addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(snapshot: DataSnapshot) {
                                 senderName = snapshot.child("username").getValue().toString()
@@ -137,11 +166,24 @@ class ChatActivity : AppCompatActivity() {
                         })
                     }
                 }
-
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
+        val contextMenuTextView = v as TextView
+        val context = this
+        // Add menu items via menu.add
+        menu.add("a")
+            .setOnMenuItemClickListener { item: MenuItem? ->
+                true
+            }
+        menu.add("b")
+            .setOnMenuItemClickListener { item: MenuItem? ->
+                true
+            }
     }
 
 
@@ -158,17 +200,20 @@ class ChatActivity : AppCompatActivity() {
         newView.findViewWithTag<TextView>("messageText").text = messageText
 
         binding.chatList.addView(newView)
+        binding.nestedScrollView.post {
+            binding.nestedScrollView.fullScroll(View.FOCUS_DOWN)
+        }
     }
 
     private fun loadKeyboard() {
-        for (i in 0 until (emojiList.size / 3)) {
+        for (i in 0 until (emojiList.size / 5)) {
             val newView =
                 LayoutInflater.from(this).inflate(R.layout.emoji_line, null, false)
 
-            for (j in 0 until 3) {
-                newView.findViewWithTag<MaterialButton>("button$j").text = emojiList[i * 3 + j]
+            for (j in 0 until 5) {
+                newView.findViewWithTag<MaterialButton>("button$j").text = emojiList[i * 5 + j]
                 newView.findViewWithTag<MaterialButton>("button$j").setOnClickListener {
-                    binding.textFieldUsername.editText!!.append(emojiList[i * 3 + j])
+                    binding.textFieldUsername.editText!!.append(emojiList[i * 5 + j])
                 }
             }
 

@@ -45,9 +45,8 @@ class MainActivity : AppCompatActivity() {
 
 
         fetchRooms()
-//        for (i in 0..50) {
-//            addChat("chat $i", (5 * i + 327374) % 84, "")
-//        }
+
+
 
         val currentActivity = this
         binding.floatingActionButton.setOnClickListener {
