@@ -17,9 +17,7 @@ import com.google.firebase.database.ValueEventListener
 import com.kepler88d.emojihouse.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-
     lateinit var binding: ActivityMainBinding
-
     lateinit var userData: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
