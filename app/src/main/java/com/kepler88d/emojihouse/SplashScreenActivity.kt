@@ -1,5 +1,6 @@
 package com.kepler88d.emojihouse
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
@@ -39,21 +40,27 @@ class SplashScreenActivity : AppCompatActivity() {
                 "🏡"
             ).random()
 
-        val currentActivity = this
+        val userDataFile = applicationContext.getFileStreamPath("id")
+        val options = ActivityOptions.makeCustomAnimation(
+            applicationContext,
+            android.R.anim.fade_in,
+            android.R.anim.fade_out
+        )
+
+        val intent =
+            if (userDataFile != null && userDataFile.exists()) {
+                Intent(this, MainActivity::class.java)
+            } else {
+                Intent(this, LoginActivity::class.java)
+            }
+        intent.flags =
+            Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+
         Timer().schedule(object : TimerTask() {
             override fun run() {
-                val userDataFile = applicationContext.getFileStreamPath("id")
-
-                val intent =
-                    if (userDataFile != null && userDataFile.exists()) {
-                        Intent(currentActivity, MainActivity::class.java)
-                    } else {
-                        Intent(currentActivity, LoginActivity::class.java)
-                    }
-                intent.flags =
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
+                startActivity(intent, options.toBundle())
+                // overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
             }
-        }, 3000)
+        }, 1000)
     }
 }
