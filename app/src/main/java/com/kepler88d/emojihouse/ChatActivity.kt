@@ -198,6 +198,7 @@ class ChatActivity : AppCompatActivity() {
         newView.findViewWithTag<TextView>("username").text = username
         newView.findViewWithTag<TextView>("icon").text = icon
         newView.findViewWithTag<TextView>("messageText").text = messageText
+        newView.findViewWithTag<TextView>("messageText").textSize = if (messageText.length <= 5) 48F else 36F
 
         binding.chatList.addView(newView)
         binding.nestedScrollView.post {
