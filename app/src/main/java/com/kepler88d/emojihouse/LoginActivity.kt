@@ -45,9 +45,9 @@ class LoginActivity : AppCompatActivity() {
 
     private fun addLoginButtonListener() {
         binding.loginButton.setOnClickListener {
-            val text = binding.textFieldUsername.editText?.text
+            val text = binding.inputField.editText?.text
             if (text.isNullOrEmpty()) {
-                binding.textFieldUsername.error = "Username can't be empty"
+                binding.inputField.error = "Username can't be empty"
             } else if (!requiredPermissions.all {
                     ContextCompat.checkSelfPermission(
                         applicationContext, it
@@ -99,12 +99,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun attachTextChanger() {
-        binding.textFieldUsername.editText!!.addTextChangedListener(object :
+        binding.inputField.editText!!.addTextChangedListener(object :
             TextWatcher {
             override fun afterTextChanged(s: Editable) {}
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                binding.textFieldUsername.error = null
+                binding.inputField.error = null
                 binding.textView.text =
                     "\uD83D\uDC4B Hello${if (s.isNotBlank()) ", ${s.trim()}" else ""}."
             }
