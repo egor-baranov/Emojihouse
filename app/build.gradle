@@ -46,6 +46,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'me.everything:overscroll-decor-android:1.1.0'
+    implementation 'com.kcthota:emoji4j:6.0'
+    implementation 'com.r0adkll:slidableactivity:2.1.0'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
