@@ -1,11 +1,10 @@
 package com.kepler88d.emojihouse
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.ContextMenu
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.TextView
@@ -19,7 +18,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.kepler88d.emojihouse.databinding.ActivityChatBinding
+import com.r0adkll.slidr.Slidr
+import emoji4j.EmojiUtils
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
+
 
 class ChatActivity : AppCompatActivity() {
     lateinit var binding: ActivityChatBinding
@@ -28,7 +30,7 @@ class ChatActivity : AppCompatActivity() {
     lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
 
     var firstlaunch = true
-    var idRoom = ""
+    var roomId = ""
     private val emojiList = listOf(
         "😏", "🤣", "🤡", "😎",
         "🤥", "😉", "😳", "🧐",
@@ -43,10 +45,9 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         if (savedInstanceState == null) {
-            idRoom = intent.extras!!["id"].toString()
+            roomId = intent.extras!!["id"].toString()
         }
 
-        Log.d("checkextras", idRoom)
         userData = User("", "", "")
 
         openFileInput("id").use {
@@ -62,7 +63,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat)
-        binding.textFieldUsername.editText!!.showSoftInputOnFocus = false
+        binding.inputField.editText!!.showSoftInputOnFocus = false
 
         loadKeyboard()
         binding.sendButton.setOnClickListener {
@@ -86,15 +87,37 @@ class ChatActivity : AppCompatActivity() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
 
-        binding.textFieldUsername.editText!!.setOnClickListener {
+        binding.inputField.editText!!.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
-        binding.textFieldUsername.editText!!.isFocusedByDefault = true
+        binding.inputField.editText!!.isFocusedByDefault = true
 
         binding.menuButton.setOnClickListener { v: View ->
             showMenu(v, R.menu.chat_dropdown_menu)
         }
+
+        binding.inputField.editText!!.addTextChangedListener(
+            object : TextWatcher {
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                    binding.inputField.editText!!.setText(
+                        s.filter { EmojiUtils.isEmoji(it.toString()) }
+                    )
+                }
+
+                override fun beforeTextChanged(
+                    s: CharSequence,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun afterTextChanged(s: Editable) {}
+            }
+        )
+
+        Slidr.attach(this)
     }
 
     private fun showMenu(v: View, @MenuRes menuRes: Int) {
@@ -108,7 +131,7 @@ class ChatActivity : AppCompatActivity() {
 
 
     private fun fetchRoomName() {
-        val ref = FirebaseDatabase.getInstance(url).getReference("/rooms/$idRoom")
+        val ref = FirebaseDatabase.getInstance(url).getReference("/rooms/$roomId")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val name = snapshot.child("roomName").getValue().toString()
@@ -120,7 +143,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun addListenerForMessages() {
-        val ref = FirebaseDatabase.getInstance(url).getReference("/rooms/$idRoom/messages")
+        val ref = FirebaseDatabase.getInstance(url).getReference("/rooms/$roomId/messages")
         ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.children.count() == 0) {
@@ -181,8 +204,8 @@ class ChatActivity : AppCompatActivity() {
             return
         }
 
-        val newView =
-            LayoutInflater.from(this).inflate(R.layout.message_item, null, false)
+        val newView = LayoutInflater
+            .from(this).inflate(R.layout.message_item, null, false)
 
         newView.findViewWithTag<TextView>("username").text = username
         newView.findViewWithTag<TextView>("icon").text = icon
@@ -191,9 +214,9 @@ class ChatActivity : AppCompatActivity() {
             if (messageText.length <= 5) 48F else 24F
 
         binding.chatList.addView(newView)
-        binding.nestedScrollView.postDelayed({
+        binding.nestedScrollView.run {
             binding.nestedScrollView.fullScroll(View.FOCUS_DOWN)
-        }, 1000)
+        }
         OverScrollDecoratorHelper.setUpOverScroll(binding.nestedScrollView)
     }
 
@@ -205,7 +228,7 @@ class ChatActivity : AppCompatActivity() {
             for (j in 0 until 5) {
                 newView.findViewWithTag<MaterialButton>("button$j").text = emojiList[i * 5 + j]
                 newView.findViewWithTag<MaterialButton>("button$j").setOnClickListener {
-                    binding.textFieldUsername.editText!!.append(emojiList[i * 5 + j])
+                    binding.inputField.editText!!.append(emojiList[i * 5 + j])
                 }
             }
 
@@ -214,12 +237,12 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun sendMessage() {
-        val message = binding.textFieldUsername.editText!!.text.toString()
+        val message = binding.inputField.editText!!.text.toString()
         if (message.isEmpty()) {
             return
         }
 
-        val ref = FirebaseDatabase.getInstance(url).getReference("/rooms/$idRoom/messages")
+        val ref = FirebaseDatabase.getInstance(url).getReference("/rooms/$roomId/messages")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {}
 
@@ -230,6 +253,7 @@ class ChatActivity : AppCompatActivity() {
                     .child("message").setValue(message)
             }
         })
-        binding.textFieldUsername.editText!!.setText("")
+
+        binding.inputField.editText!!.setText("")
     }
 }
