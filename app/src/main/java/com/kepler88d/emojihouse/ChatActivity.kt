@@ -128,38 +128,36 @@ class ChatActivity : AppCompatActivity() {
                 }
                 if (!firstlaunch) {
                     listOf(snapshot.children.last()).forEach {
-                        val text = it.child("message").getValue().toString()
-                        val sender = it.child("sender").getValue()
-                        var senderName = ""
-                        val refSender =
-                            FirebaseDatabase.getInstance(url).getReference("/users/$sender")
-                        refSender.addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                senderName = snapshot.child("username").getValue().toString()
-                                val emoji = snapshot.child("profileImage").getValue().toString()
-                                addMessage(senderName, emoji, text)
-                            }
+                        val sender = it.child("sender").value
+                        FirebaseDatabase.getInstance(url).getReference("/users/$sender")
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    addMessage(
+                                        snapshot.child("username").value.toString(),
+                                        snapshot.child("profileImage").value.toString(),
+                                        it.child("message").value.toString()
+                                    )
+                                }
 
-                            override fun onCancelled(error: DatabaseError) {}
-                        })
+                                override fun onCancelled(error: DatabaseError) {}
+                            })
                     }
                 } else {
                     snapshot.children.forEach {
                         firstlaunch = false
-                        val text = it.child("message").getValue().toString()
-                        val sender = it.child("sender").getValue()
-                        var senderName = ""
-                        val refSender =
-                            FirebaseDatabase.getInstance(url).getReference("/users/$sender")
-                        refSender.addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                senderName = snapshot.child("username").getValue().toString()
-                                val emoji = snapshot.child("profileImage").getValue().toString()
-                                addMessage(senderName, emoji, text)
-                            }
+                        FirebaseDatabase.getInstance(url)
+                            .getReference("/users/${it.child("sender").value}")
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    addMessage(
+                                        snapshot.child("username").value.toString(),
+                                        snapshot.child("profileImage").value.toString(),
+                                        it.child("message").value.toString()
+                                    )
+                                }
 
-                            override fun onCancelled(error: DatabaseError) {}
-                        })
+                                override fun onCancelled(error: DatabaseError) {}
+                            })
                     }
                 }
             }
@@ -173,14 +171,8 @@ class ChatActivity : AppCompatActivity() {
         v: View,
         menuInfo: ContextMenu.ContextMenuInfo?
     ) {
-        menu.add("a")
-            .setOnMenuItemClickListener { item: MenuItem? ->
-                true
-            }
-        menu.add("b")
-            .setOnMenuItemClickListener { item: MenuItem? ->
-                true
-            }
+        menu.add("a").setOnMenuItemClickListener { true }
+        menu.add("b").setOnMenuItemClickListener { true }
     }
 
 
@@ -229,14 +221,13 @@ class ChatActivity : AppCompatActivity() {
 
         val ref = FirebaseDatabase.getInstance(url).getReference("/rooms/$idRoom/messages")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {
-
-            }
+            override fun onCancelled(error: DatabaseError) {}
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                ref.child(snapshot.childrenCount.toString()).child("sender").setValue(userData.id)
-                ref.child(snapshot.childrenCount.toString()).child("message").setValue(message)
-
+                ref.child(snapshot.childrenCount.toString())
+                    .child("sender").setValue(userData.id)
+                ref.child(snapshot.childrenCount.toString())
+                    .child("message").setValue(message)
             }
         })
         binding.textFieldUsername.editText!!.setText("")
