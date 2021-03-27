@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.kepler88d.emojihouse.databinding.ActivityChatBinding
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 
 class ChatActivity : AppCompatActivity() {
     lateinit var binding: ActivityChatBinding
@@ -28,7 +29,7 @@ class ChatActivity : AppCompatActivity() {
 
     var firstlaunch = true
     var idRoom = ""
-    val emojiList = listOf(
+    private val emojiList = listOf(
         "😏", "🤣", "🤡", "😎",
         "🤥", "😉", "😳", "🧐",
         "🤓", "🤩", "🥳", "🤯",
@@ -100,13 +101,8 @@ class ChatActivity : AppCompatActivity() {
         val popup = PopupMenu(this, v)
         popup.menuInflater.inflate(menuRes, popup.menu)
 
-        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
-            true
-        }
-        popup.setOnDismissListener {
-            // Respond to popup being dismissed.
-        }
-        // Show the popup menu.
+        popup.setOnMenuItemClickListener { true }
+        popup.setOnDismissListener {}
         popup.show()
     }
 
@@ -172,10 +168,11 @@ class ChatActivity : AppCompatActivity() {
         })
     }
 
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
-        val contextMenuTextView = v as TextView
-        val context = this
-        // Add menu items via menu.add
+    override fun onCreateContextMenu(
+        menu: ContextMenu,
+        v: View,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
         menu.add("a")
             .setOnMenuItemClickListener { item: MenuItem? ->
                 true
@@ -198,12 +195,14 @@ class ChatActivity : AppCompatActivity() {
         newView.findViewWithTag<TextView>("username").text = username
         newView.findViewWithTag<TextView>("icon").text = icon
         newView.findViewWithTag<TextView>("messageText").text = messageText
-        newView.findViewWithTag<TextView>("messageText").textSize = if (messageText.length <= 5) 48F else 24F
+        newView.findViewWithTag<TextView>("messageText").textSize =
+            if (messageText.length <= 5) 48F else 24F
 
         binding.chatList.addView(newView)
-        binding.nestedScrollView.post {
+        binding.nestedScrollView.postDelayed({
             binding.nestedScrollView.fullScroll(View.FOCUS_DOWN)
-        }
+        }, 1000)
+        OverScrollDecoratorHelper.setUpOverScroll(binding.nestedScrollView)
     }
 
     private fun loadKeyboard() {
@@ -224,6 +223,10 @@ class ChatActivity : AppCompatActivity() {
 
     private fun sendMessage() {
         val message = binding.textFieldUsername.editText!!.text.toString()
+        if (message.isEmpty()) {
+            return
+        }
+
         val ref = FirebaseDatabase.getInstance(url).getReference("/rooms/$idRoom/messages")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -238,10 +241,4 @@ class ChatActivity : AppCompatActivity() {
         })
         binding.textFieldUsername.editText!!.setText("")
     }
-
-    data class message(
-        val name: String,
-        val icon: String,
-        val text: String
-    )
 }

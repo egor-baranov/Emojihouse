@@ -15,6 +15,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.kepler88d.emojihouse.databinding.ActivityMainBinding
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
+import me.everything.android.ui.overscroll.VerticalOverScrollBounceEffectDecorator
+import me.everything.android.ui.overscroll.adapters.AbsListViewOverScrollDecorAdapter
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -43,6 +46,8 @@ class MainActivity : AppCompatActivity() {
         binding.floatingActionButton.setOnClickListener {
             showMenuDialog()
         }
+
+        OverScrollDecoratorHelper.setUpOverScroll(binding.chatScrollView)
     }
 
     private fun showMenuDialog() {
