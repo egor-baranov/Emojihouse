@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.core.widget.NestedScrollView
+            <ScrollView
                 android:id="@+id/nestedScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -30,8 +30,9 @@
                     android:id="@+id/chatList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:animateLayoutChanges="true"
                     android:orientation="vertical"></LinearLayout>
-            </androidx.core.widget.NestedScrollView>
+            </ScrollView>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/header"
@@ -69,9 +70,9 @@
                     android:id="@+id/menuButton"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:clickable="true"
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/ic_baseline_more_vert_24"
+                    android:clickable="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
