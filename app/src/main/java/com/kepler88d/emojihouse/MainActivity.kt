@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.DataSnapshot
@@ -15,13 +15,13 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.kepler88d.emojihouse.databinding.ActivityMainBinding
-import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
-import me.everything.android.ui.overscroll.VerticalOverScrollBounceEffectDecorator
-import me.everything.android.ui.overscroll.adapters.AbsListViewOverScrollDecorAdapter
+import com.kepler88d.emojihouse.fragments.ChatFragment
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : FragmentActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var userData: User
+
+    lateinit var roomId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +46,6 @@ class MainActivity : AppCompatActivity() {
         binding.floatingActionButton.setOnClickListener {
             showMenuDialog()
         }
-
-        OverScrollDecoratorHelper.setUpOverScroll(binding.chatScrollView)
     }
 
     private fun showMenuDialog() {
@@ -147,9 +145,10 @@ class MainActivity : AppCompatActivity() {
         newView.findViewWithTag<TextView>("img").text = pic.take(2)
 
         newView.setOnClickListener {
-            val intent = Intent(this, ChatActivity::class.java)
-            intent.putExtra("id", id)
-            startActivity(intent)
+            roomId = id
+            supportFragmentManager.beginTransaction()
+                .add(R.id.fragment_container, ChatFragment())
+                .commit()
         }
 
         findViewById<LinearLayout>(R.id.chatList).addView(newView)
